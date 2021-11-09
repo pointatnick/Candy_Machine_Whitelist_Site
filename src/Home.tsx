@@ -84,8 +84,26 @@ const Home = (props: HomeProps) => {
     })();
   };
 
+  const writeCookie = () => {
+    document.cookie = 'timesMintedAl=1';
+  };
+  const getLocalTimesMinted = () => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; timesMintedAl=`);
+    const kvPair = parts.pop(); //; timesMintedAl=1
+    if (kvPair) {
+      return parseInt(kvPair.split(';').shift()!);
+    } else {
+      return 0;
+    }
+  };
+
   const onMint = async () => {
     try {
+      if (getLocalTimesMinted() >= 1) {
+        throw new Error('Not enough reserves');
+      }
+
       let res = await fetch(
         `${props.apiUrl}/whitelisted/member/${(
           wallet as anchor.Wallet
@@ -98,11 +116,12 @@ const Home = (props: HomeProps) => {
         throw new Error('You are not whitelisted');
       }
       if (res_num - 1 < 0) {
-        console.log('confirmed');
         throw new Error('Not enough reserves');
       }
       setIsMinting(true);
       if (wallet && candyMachine?.program) {
+        writeCookie();
+
         const mintTxId = await mintOneToken(
           candyMachine,
           props.config,
