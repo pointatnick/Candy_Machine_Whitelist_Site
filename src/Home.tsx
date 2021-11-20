@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Countdown from 'react-countdown';
-import { Button, CircularProgress, Snackbar } from '@material-ui/core';
+import { CircularProgress, Snackbar } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 
 import * as anchor from '@project-serum/anchor';
@@ -9,7 +9,6 @@ import * as anchor from '@project-serum/anchor';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
-import { WalletDialogButton } from '@solana/wallet-adapter-material-ui';
 
 import {
   CandyMachine,
@@ -19,13 +18,28 @@ import {
   shortenAddress,
 } from './candy-machine';
 
-const ConnectButton = styled(WalletDialogButton)``;
+import {
+  MainContainer,
+  DisplayContainer,
+  InfoContainer,
+  MintContainer,
+  MintButton,
+  ConnectButton,
+} from './components';
 
 const CounterText = styled.span``; // add your styles here
-
-const MintContainer = styled.div``; // add your styles here
-
-const MintButton = styled(Button)``; // add your styles here
+const DisplayImage = styled.img`
+  max-width: 25vw;
+  border-radius: 1em;
+`;
+const Header = styled.div`
+  font-size: 2rem;
+`;
+const Title = styled.div`
+  font-size: 8rem;
+  line-height: 1;
+  text-align: center;
+`;
 
 export interface HomeProps {
   candyMachineId: anchor.web3.PublicKey;
@@ -85,12 +99,13 @@ const Home = (props: HomeProps) => {
   };
 
   const writeCookie = () => {
-    document.cookie = 'timesMintedAl=1';
+    // cookie should be the wallet pubkey in case someone has more than one wallet per discord acct for whatever reason
+    document.cookie = 'PeOjOfsDWGWq5LKWfSss=1'; // use a dummy string so no one looks
   };
   const getLocalTimesMinted = () => {
     const value = `; ${document.cookie}`;
-    const parts = value.split(`; timesMintedAl=`);
-    const kvPair = parts.pop(); //; timesMintedAl=1
+    const parts = value.split(`; PeOjOfsDWGWq5LKWfSss=`);
+    const kvPair = parts.pop(); //; PeOjOfsDWGWq5LKWfSss=1
     if (kvPair) {
       return parseInt(kvPair.split(';').shift()!);
     } else {
@@ -230,59 +245,83 @@ const Home = (props: HomeProps) => {
 
   return (
     <main>
-      {wallet && (
-        <p>Wallet {shortenAddress(wallet.publicKey.toBase58() || '')}</p>
-      )}
+      <Title>fancy diamonds</Title>
+      <MainContainer>
+        <DisplayContainer>
+          <DisplayImage
+            src="./diamonds.gif"
+            alt="Diamonds on display"
+          ></DisplayImage>
+        </DisplayContainer>
+        <InfoContainer>
+          <div>
+            <Header>minting your fancy diamond</Header>
+            <div>
+              <ol>
+                <li>click "connect wallet".</li>
+                <li>select the wallet you want to use.</li>
+                <li>
+                  when it's time to mint, hit the button! your diamond will show
+                  up in your wallet 💎
+                </li>
+              </ol>
+            </div>
+          </div>
+        </InfoContainer>
+        <MintContainer>
+          {wallet && (
+            <p>Wallet {shortenAddress(wallet.publicKey.toBase58() || '')}</p>
+          )}
 
-      {wallet && <p>Balance: {(balance || 0).toLocaleString()} SOL</p>}
+          {wallet && <p>Balance: {(balance || 0).toLocaleString()} SOL</p>}
 
-      {wallet && <p>Total Available: {itemsAvailable}</p>}
+          {wallet && <p>Total Available: {itemsAvailable}</p>}
 
-      {wallet && <p>Redeemed: {itemsRedeemed}</p>}
+          {wallet && <p>Redeemed: {itemsRedeemed}</p>}
 
-      {wallet && <p>Remaining: {itemsRemaining}</p>}
+          {wallet && <p>Remaining: {itemsRemaining}</p>}
 
-      <MintContainer>
-        {!wallet ? (
-          <ConnectButton>Connect Wallet</ConnectButton>
-        ) : (
-          <MintButton
-            disabled={!isWhitelisted || isSoldOut || isMinting || !isActive} //change happened here
-            onClick={onMint}
-            variant="contained"
-          >
-            {isSoldOut ? (
-              'SOLD OUT'
-            ) : isActive ? (
-              isMinting ? (
-                <CircularProgress />
+          {!wallet ? (
+            <ConnectButton>Connect Wallet</ConnectButton>
+          ) : (
+            <MintButton
+              disabled={!isWhitelisted || isSoldOut || isMinting || !isActive} //change happened here
+              onClick={onMint}
+              variant="contained"
+            >
+              {isSoldOut ? (
+                'SOLD OUT'
+              ) : isActive ? (
+                isMinting ? (
+                  <CircularProgress />
+                ) : (
+                  'MINT'
+                )
               ) : (
-                'MINT'
-              )
-            ) : (
-              <Countdown
-                date={startDate}
-                onMount={({ completed }) => completed && setIsActive(true)}
-                onComplete={() => setIsActive(true)}
-                renderer={renderCounter}
-              />
-            )}
-          </MintButton>
-        )}
-      </MintContainer>
+                <Countdown
+                  date={startDate}
+                  onMount={({ completed }) => completed && setIsActive(true)}
+                  onComplete={() => setIsActive(true)}
+                  renderer={renderCounter}
+                />
+              )}
+            </MintButton>
+          )}
+        </MintContainer>
 
-      <Snackbar
-        open={alertState.open}
-        autoHideDuration={6000}
-        onClose={() => setAlertState({ ...alertState, open: false })}
-      >
-        <Alert
+        <Snackbar
+          open={alertState.open}
+          autoHideDuration={6000}
           onClose={() => setAlertState({ ...alertState, open: false })}
-          severity={alertState.severity}
         >
-          {alertState.message}
-        </Alert>
-      </Snackbar>
+          <Alert
+            onClose={() => setAlertState({ ...alertState, open: false })}
+            severity={alertState.severity}
+          >
+            {alertState.message}
+          </Alert>
+        </Snackbar>
+      </MainContainer>
     </main>
   );
 };
