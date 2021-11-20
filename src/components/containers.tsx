@@ -1,8 +1,11 @@
 import styled from 'styled-components';
 export const MainContainer = styled.div`
+  margin: auto;
+  padding-left: 96px;
+  padding-right: 96px;
   background: white;
-  height: 100vh;
-  width: 100vw;
+  height: 100%;
+  width: auto;
   display: flex;
   gap: 3%;
   align-items: center;

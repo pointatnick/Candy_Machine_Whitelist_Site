@@ -29,16 +29,43 @@ import {
 
 const CounterText = styled.span``; // add your styles here
 const DisplayImage = styled.img`
-  max-width: 25vw;
+  max-width: 100%;
   border-radius: 1em;
+  place-self: center;
 `;
 const Header = styled.div`
   font-size: 2rem;
+  font-family: 'Josefin Sans';
+  margin-bottom: 1rem;
+  margin-left: 2.5rem;
+`;
+const Text = styled.div`
+  font-size: 1.5rem;
+  font-family: 'Cormorant';
+`;
+const MintText = styled(Text)`
+  font-size: 2rem;
+  margin-left: 6rem;
+  margin-right: 6rem;
+  font-family: monospace;
 `;
 const Title = styled.div`
-  font-size: 8rem;
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+  font-size: 4.5rem;
   line-height: 1;
   text-align: center;
+  font-family: 'Josefin Sans';
+  text-transform: uppercase;
+`;
+const SolanaBanner = styled.div`
+  background: rgb(255, 0, 255);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 0, 255, 1) 0%,
+    rgba(0, 255, 255, 1) 100%
+  );
+  padding-bottom: 0.75rem;
 `;
 
 export interface HomeProps {
@@ -245,6 +272,7 @@ const Home = (props: HomeProps) => {
 
   return (
     <main>
+      <SolanaBanner></SolanaBanner>
       <Title>fancy diamonds</Title>
       <MainContainer>
         <DisplayContainer>
@@ -253,36 +281,21 @@ const Home = (props: HomeProps) => {
             alt="Diamonds on display"
           ></DisplayImage>
         </DisplayContainer>
-        <InfoContainer>
-          <div>
-            <Header>minting your fancy diamond</Header>
-            <div>
-              <ol>
-                <li>click "connect wallet".</li>
-                <li>select the wallet you want to use.</li>
-                <li>
-                  when it's time to mint, hit the button! your diamond will show
-                  up in your wallet 💎
-                </li>
-              </ol>
-            </div>
-          </div>
-        </InfoContainer>
         <MintContainer>
-          {wallet && (
-            <p>Wallet {shortenAddress(wallet.publicKey.toBase58() || '')}</p>
-          )}
-
-          {wallet && <p>Balance: {(balance || 0).toLocaleString()} SOL</p>}
-
-          {wallet && <p>Total Available: {itemsAvailable}</p>}
-
-          {wallet && <p>Redeemed: {itemsRedeemed}</p>}
-
-          {wallet && <p>Remaining: {itemsRemaining}</p>}
+          <MintText>
+            {wallet && (
+              <p>Wallet: {shortenAddress(wallet.publicKey.toBase58() || '')}</p>
+            )}
+            {wallet && <p>Cost: 0.5 SOL</p>}
+            {wallet && (
+              <p>
+                {itemsRedeemed} / {itemsAvailable} minted
+              </p>
+            )}
+          </MintText>
 
           {!wallet ? (
-            <ConnectButton>Connect Wallet</ConnectButton>
+            <ConnectButton>connect wallet</ConnectButton>
           ) : (
             <MintButton
               disabled={!isWhitelisted || isSoldOut || isMinting || !isActive} //change happened here
@@ -295,7 +308,7 @@ const Home = (props: HomeProps) => {
                 isMinting ? (
                   <CircularProgress />
                 ) : (
-                  'MINT'
+                  'mint'
                 )
               ) : (
                 <Countdown
@@ -308,7 +321,22 @@ const Home = (props: HomeProps) => {
             </MintButton>
           )}
         </MintContainer>
-
+        <InfoContainer>
+          <div>
+            <Header>mint instructions</Header>
+            <Text>
+              <ol>
+                <li>click "connect wallet".</li>
+                <li>select the wallet you want to use.</li>
+                <li>
+                  when it's time to mint, hit the button!
+                  <br />
+                  your diamond will show up in your wallet 💎
+                </li>
+              </ol>
+            </Text>
+          </div>
+        </InfoContainer>
         <Snackbar
           open={alertState.open}
           autoHideDuration={6000}

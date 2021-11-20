@@ -1319,6 +1319,16 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
+"@fontsource/cormorant@^4.5.0":
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/@fontsource/cormorant/-/cormorant-4.5.0.tgz#3bf64184508ecc1ae8ca7435145d4734688d8fc2"
+  integrity sha512-8ptjexf5BFVqaTTpk0TFYTs3MkqH4215SP0nzPGHeebmLjELozDxh/r7YGZurBV0gN/Q4HH9B9dl4JqGRUQ1Fg==
+
+"@fontsource/josefin-sans@^4.5.1":
+  version "4.5.1"
+  resolved "https://registry.yarnpkg.com/@fontsource/josefin-sans/-/josefin-sans-4.5.1.tgz#b5630018fce69a3a16680199b95ba993387f07ae"
+  integrity sha512-V8T4akR0P9/MnYJ/ati4bvFp5Wdf0LEioNPGlEe7hK6c2BRQ3leeTXu4bKZ475H4i81eR4Av7bFNMp1aUC3zww==
+
 "@hapi/address@2.x.x":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@hapi/address/-/address-2.1.4.tgz#5d67ed43f3fd41a69d4b9ff7b56e7c0d1d0a81e5"
