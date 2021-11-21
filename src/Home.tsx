@@ -29,6 +29,7 @@ import {
 
 const CounterText = styled.span``; // add your styles here
 const DisplayImage = styled.img`
+  min-width: 240px;
   max-width: 100%;
   border-radius: 1em;
   place-self: center;
