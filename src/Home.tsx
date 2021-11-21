@@ -3,11 +3,7 @@ import styled from 'styled-components';
 import Countdown from 'react-countdown';
 import { CircularProgress, Snackbar } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
-
 import * as anchor from '@project-serum/anchor';
-
-import { LAMPORTS_PER_SOL } from '@solana/web3.js';
-
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 
 import {
@@ -80,7 +76,6 @@ export interface HomeProps {
 }
 
 const Home = (props: HomeProps) => {
-  const [balance, setBalance] = useState<number>();
   const [isActive, setIsActive] = useState(false); // true when countdown completes
   const [isSoldOut, setIsSoldOut] = useState(false); // true when items remaining is zero
   const [isMinting, setIsMinting] = useState(false); // true when user got to press MINT
@@ -88,7 +83,6 @@ const Home = (props: HomeProps) => {
 
   const [itemsAvailable, setItemsAvailable] = useState(0);
   const [itemsRedeemed, setItemsRedeemed] = useState(0);
-  const [itemsRemaining, setItemsRemaining] = useState(0);
 
   const [alertState, setAlertState] = useState<AlertState>({
     open: false,
@@ -117,7 +111,7 @@ const Home = (props: HomeProps) => {
       );
 
       setItemsAvailable(itemsAvailable);
-      setItemsRemaining(itemsRemaining);
+      console.log(itemsRemaining);
       setItemsRedeemed(itemsRedeemed);
 
       setIsSoldOut(itemsRemaining === 0);
@@ -237,10 +231,6 @@ const Home = (props: HomeProps) => {
         severity: 'error',
       });
     } finally {
-      if (wallet) {
-        const balance = await props.connection.getBalance(wallet.publicKey);
-        setBalance(balance / LAMPORTS_PER_SOL);
-      }
       setIsMinting(false);
       refreshCandyMachineState();
     }
@@ -249,8 +239,6 @@ const Home = (props: HomeProps) => {
   useEffect(() => {
     (async () => {
       if (wallet) {
-        const balance = await props.connection.getBalance(wallet.publicKey);
-        setBalance(balance / LAMPORTS_PER_SOL);
         const data = await fetch(
           `${props.apiUrl}/whitelisted/member/${(
             wallet as anchor.Wallet
